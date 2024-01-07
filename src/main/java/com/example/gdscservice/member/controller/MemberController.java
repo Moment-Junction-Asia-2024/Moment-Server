@@ -23,7 +23,7 @@ public class MemberController {
     private final PasswordEncoder passwordEncoder;
     private final MemberService memberService;
 
-    @PostMapping("/m/signin")
+    @PostMapping("/signin")
     public ResponseEntity<Message> loginSuite(@Valid @RequestBody ReqSignInDto reqSignInDto, BindingResult bindingResult, @RequestHeader("User-Agent") String userAgent) {
         if(bindingResult.hasErrors()) throw new CustomException(StatusCode.INVALID_DATA_FORMAT);
         Token token = memberService.getToken(reqSignInDto, userAgent, passwordEncoder);
