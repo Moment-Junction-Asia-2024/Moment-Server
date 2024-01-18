@@ -15,6 +15,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -32,10 +33,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
     private final JwtValidator jwtValidator;
     private final JwtInfoExtractor jwtInfoExtractor;
@@ -55,19 +57,19 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(CsrfConfigurer::disable)
-            .httpBasic(HttpBasicConfigurer::disable)
-            .authorizeHttpRequests((authorizeRequests) -> {
-                authorizeRequests.requestMatchers("/member/m/**").authenticated();
-                authorizeRequests.requestMatchers("/member/**").permitAll();
+                .csrf(CsrfConfigurer::disable)
+                .httpBasic(HttpBasicConfigurer::disable)
+                .authorizeHttpRequests((authorizeRequests) -> {
+                    authorizeRequests.requestMatchers("/member/m/**").authenticated();
+                    authorizeRequests.requestMatchers("/member/**").permitAll();
 
-            })
-            .cors(Customizer.withDefaults())
-            .exceptionHandling((authenticationManager) -> authenticationManager.authenticationEntryPoint(authenticationEntryPointHandler)
-                    .accessDeniedHandler(webAccessDeniedHandler))
-            .addFilterBefore(new JwtAuthenticationFilter(jwtValidator, jwtInfoExtractor),
-                    UsernamePasswordAuthenticationFilter.class)
-            .sessionManagement(configure -> configure.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                })
+                .cors(Customizer.withDefaults())
+                .exceptionHandling((authenticationManager) -> authenticationManager.authenticationEntryPoint(authenticationEntryPointHandler)
+                        .accessDeniedHandler(webAccessDeniedHandler))
+                .addFilterBefore(new JwtAuthenticationFilter(jwtValidator, jwtInfoExtractor),
+                        UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(configure -> configure.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 
@@ -91,4 +93,3 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 }
-
