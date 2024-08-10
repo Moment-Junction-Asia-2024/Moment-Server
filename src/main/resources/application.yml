@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+spring:
+  kafka:
+    bootstrap-servers: localhost:10000,localhost:10001,localhost:10002
+
 openai:
   model: gpt-4o
   api:
