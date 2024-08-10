@@ -13,7 +13,8 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfiguration {
-
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
 
     @Bean
     public KafkaAdmin admin() {
@@ -22,13 +23,13 @@ public class KafkaConfiguration {
         return new KafkaAdmin(configs);
     }
 
-    @Bean
-    public NewTopic setting() {
-        return TopicBuilder.name("athena")
-                .partitions(10)
-                .replicas(3)
-                .compact()
-                .build();
-    }
+//    @Bean
+//    public NewTopic setting() {
+//        return TopicBuilder.name("athena")
+//                .partitions(10)
+//                .replicas(3)
+//                .compact()
+//                .build();
+//    }
 
 }

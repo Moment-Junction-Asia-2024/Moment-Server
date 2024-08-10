@@ -7,5 +7,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface CctvService {
-    List<CctvJsonDto> getCctvJsonDtoList(String location) throws IOException;
+    List<CctvJsonDto> getCctvJsonDtoList(String location, String characteristic) throws IOException;
 }

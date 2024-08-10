@@ -11,13 +11,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,9 +43,11 @@ public class CctvServiceImpl implements CctvService {
     private String cctvFileBasePath;
 
     @Override
-    public List<CctvJsonDto> getCctvJsonDtoList(String location) throws IOException {
+    public List<CctvJsonDto> getCctvJsonDtoList(String location, String characteristic) throws IOException {
         StringBuilder content = new StringBuilder();
         List<CctvJsonDto> targetCctvIdList;
+        List<Mono<String>> asyncReqQueue = new ArrayList<>();
+
         List<CctvJsonDto> cctvCandidates = cctvRepository.findCctvJsonDtoByLocation(location)
                 .stream()
                 .filter(cctvJsonDto -> {
@@ -65,14 +76,39 @@ public class CctvServiceImpl implements CctvService {
             String targetCctvIdListString = jsonNode.path("choices").get(0).path("message").path("content").asText();
             targetCctvIdList = mapper.readValue(targetCctvIdListString, new TypeReference<List<CctvJsonDto>>() {});
 
-            System.out.println(targetCctvIdList);
-            for (int i = 1; i < 15; i++) {
-                String folderName = "cctv" + i;
-//                Path folderPath = Paths.get(basePath, folderName);
-            }
+//            System.out.println(targetCctvIdList);
+//            for (int i = 1; i < 15; i++) {
+//                String folderName = "cctv" + i;
+//                Path folderPath = Paths.get(cctvFileBasePath, folderName);
+//                List<File> imageFiles = Files.list(folderPath)
+//                        .filter(Files::isRegularFile)
+//                        .map(Path::toFile)
+//                        .collect(Collectors.toList());
+//
+//                MultipartBodyBuilder builder = new MultipartBodyBuilder();
+//                builder.part("name", folderName);
+//                for (File imageFile : imageFiles) {
+//                    builder.part("file", new FileSystemResource(imageFile));
+//                }
+//
+//                Mono<String> response = webClient.post()
+//                        .contentType(MediaType.MULTIPART_FORM_DATA)
+//                        .bodyValue(builder.build())
+//                        .retrieve()
+//                        .bodyToMono(String.class);
+//
+//                asyncReqQueue.add(response);
+//            }
+//            asyncReqQueue.stream()
+//                    .forEach(arq->{
+//                        arq.subscribe(
+//                                result -> System.out.println(" upload successful: " + result),
+//                                error -> System.err.println(" upload failed: " + error.getMessage())
+//                        );
+//                    });
             // 여기에서
 
-            return cctvCandidates;
+            return targetCctvIdList;
         }
         return cctvCandidates;
     }
