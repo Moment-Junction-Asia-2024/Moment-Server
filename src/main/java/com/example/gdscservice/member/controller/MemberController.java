@@ -38,6 +38,7 @@ public class MemberController {
     public ResponseEntity<Message> signup(@Valid @RequestBody ReqSignUpDto reqSignUpDto, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) throw new CustomException(StatusCode.INVALID_DATA_FORMAT);
         reqSignUpDto.encodePassword(passwordEncoder);
+
         memberService.saveMemberInfo(reqSignUpDto);
         return ResponseEntity.ok(new Message(StatusCode.OK));
     }
