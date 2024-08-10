@@ -14,10 +14,10 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/action")
 public class ActionController {
-    private final ActionInstructor actionInstructor;
+    private final ActionManager actionManager;
 
     @PostMapping("/")
     public ResponseEntity<Message> getPrompt(@RequestBody HashMap<String, String> userPrompt) throws IOException {
-        return ResponseEntity.ok(new Message(StatusCode.OK, actionInstructor.promptBuilder(userPrompt.get("userPrompt"))));
+        return ResponseEntity.ok(new Message(StatusCode.OK, actionManager.apiExtractor(userPrompt.get("userPrompt"))));
     }
 }
