@@ -37,7 +37,7 @@ public class ActionInstructor {
     }
 
     private String loadOpenAiSpec() throws IOException {
-        var resource = new ClassPathResource(openAiSpecLoc);
+        Resource resource = new ClassPathResource(openAiSpecLoc);
         try (InputStream inputStream = resource.getInputStream();
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             return reader.lines().collect(Collectors.joining(System.lineSeparator()));

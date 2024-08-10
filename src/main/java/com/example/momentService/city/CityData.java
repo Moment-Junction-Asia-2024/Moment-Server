@@ -1,4 +1,4 @@
-package com.example.gdscservice.cityData.dto;
+package com.example.momentService.city;
 
 import lombok.Builder;
 import lombok.Getter;

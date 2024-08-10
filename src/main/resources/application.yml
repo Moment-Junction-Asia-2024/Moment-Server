@@ -1,7 +1,6 @@
 server:
   port: 8080
 
-<<<<<<< HEAD
 action:
   role: You are an artificial intelligence that reviews OpenAiSpec, analyzes user queries, and extracts the desired API and parameters for the user.
   context: The user must provide location information by default, and when inquiring about a child's description or range, the system should extract the optimal API with parameters that can provide the relevant information to the user.
@@ -11,19 +10,14 @@ action:
     and extract the API URL and parameters in the following JSON format. 
     Here is an example:
     \'{ "api": "test", "parameter": ["hello", "world"] }\'
-=======
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    database: mysql
-  logging.level:
-    org.hibernate.SQL: debug
 
-
-jwt :
-  access :
-    key : 9a1c7805bb074f31f9b36fa510d0c743a557aa44f9b5b1cd6dbb7f8905b067c8
-    validTime : 604800000 #7?
->>>>>>> 5f6d17f00f95a429d7258008cda8cb10e259c4ea
+city:
+  uniqueMobileDataLoc: json/unique_mobile_data.json
+  instruction: >
+    Here is the data of Pohang City. The data is collected from the mobile devices.
+    The data includes the longitude, latitude, class name, region name, and etc.
+    The classname is the name of the problems.:
+    - crack: The road is cracked.
+    - banner: The illegal banner is placed.
+    - trash: The trash is thrown away illegally.
+    - pothole: The pothole is on the road.
