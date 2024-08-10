@@ -19,7 +19,7 @@ public class CityDataServiceImpl implements CityDataService {
     private final ObjectMapper mapper;
     private final CityDataRepository cityDataRepository;
 
-    public CityData findMobileDataByTime(String dateTime1, String dateTime2) throws IOException {
+    public CityData getMobileDataByTime(String dateTime1, String dateTime2) throws IOException {
         StringBuilder content = new StringBuilder();
         cityDataRepository.findUniqueMobileDataJsonDtoByDateRange(dateTime1, dateTime2)
                 .stream()

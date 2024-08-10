@@ -5,5 +5,5 @@ import com.example.momentService.city.CityData;
 import java.io.IOException;
 
 public interface CityDataService {
-    CityData findMobileDataByTime(String dateTime1, String dateTime2) throws IOException;
+    CityData getMobileDataByTime(String dateTime1, String dateTime2) throws IOException;
 }

@@ -19,6 +19,6 @@ public class CityController {
     public ResponseEntity<Message> searchCityDataInDateRange() throws IOException {
         String dateTime1 = "2024-06-2";
         String dateTime2 = "2024-06-4";
-        return ResponseEntity.ok(new Message(StatusCode.OK, cityDataServiceImpl.findMobileDataByTime(dateTime1,dateTime2)));
+        return ResponseEntity.ok(new Message(StatusCode.OK, cityDataServiceImpl.getMobileDataByTime(dateTime1,dateTime2)));
     }
 }
