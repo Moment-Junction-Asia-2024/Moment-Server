@@ -31,8 +31,6 @@ public class MemberServiceImpl implements MemberService{
     public void saveMemberInfo(ReqSignUpDto reqSignUpDto) {
         memberRepository.findByEmail(reqSignUpDto.getEmail()).ifPresent(
                 memberInfo -> { throw new CustomException(StatusCode.REGISTERED_EMAIL); });
-        memberRepository.findByPhoneNum(reqSignUpDto.getPhoneNum()).ifPresent(
-                memberInfo -> { throw new CustomException(StatusCode.REGISTERED_EMAIL); });
         Member member = reqSignUpDto.toEntity();
 
         memberRepository.save(member);
