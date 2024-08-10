@@ -1,4 +1,4 @@
-package com.example.gdscservice;
+package com.example.momentService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

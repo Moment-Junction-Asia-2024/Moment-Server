@@ -1,4 +1,4 @@
-package com.example.gdscservice.handler;
+package com.example.momentService.handler;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

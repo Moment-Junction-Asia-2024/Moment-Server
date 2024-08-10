@@ -1,4 +1,4 @@
-package com.example.gdscservice.baseTime;
+package com.example.momentService.baseTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

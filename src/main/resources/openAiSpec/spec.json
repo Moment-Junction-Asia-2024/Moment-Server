@@ -1,0 +1,234 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CCTV API",
+    "description": "API to retrieve lists of CCTV cameras based on location and other parameters.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/action/cctv": {
+      "post": {
+        "operationId": "getCctvByLocation",
+        "summary": "Retrieve a list of CCTVs near a specified location.",
+        "description": "Returns a list of CCTVs within a default range of 1km around the specified location.",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "required": true,
+            "description": "The location to search near (e.g., '건대 입구').",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of CCTVs near the specified location.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "distance": {
+                        "type": "number",
+                        "format": "float"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/action/cctv/{range}": {
+      "post": {
+        "operationId": "getCctvByLocationAndRange",
+        "summary": "Retrieve a list of CCTVs near a specified location within a specified range.",
+        "description": "Returns a list of CCTVs within a given range around the specified location.",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "required": true,
+            "description": "The location to search near (e.g., '건대 입구').",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "range",
+            "in": "path",
+            "required": true,
+            "description": "The range in kilometers to search within.",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of CCTVs near the specified location within the specified range.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "distance": {
+                        "type": "number",
+                        "format": "float"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/action/cctv/find": {
+      "post": {
+        "operationId": "findCctvByLocationAndAppearance",
+        "summary": "Find CCTVs near a specified location where a person with certain characteristics appears.",
+        "description": "Returns a list of CCTVs within a default range of 1km around the specified location where a person with the specified characteristics is seen.",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "required": true,
+            "description": "The location to search near (e.g., '건대 입구').",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appearance",
+            "in": "query",
+            "required": true,
+            "description": "The description of the person to search for (e.g., '파란색 옷과 모자를 입은 아이').",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of CCTVs near the specified location where the person with the specified characteristics appears.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "distance": {
+                        "type": "number",
+                        "format": "float"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/action/cctv/find/{range}": {
+      "get": {
+        "operationId": "findCctvByLocationAppearanceAndRange",
+        "summary": "Find CCTVs near a specified location within a specified range where a person with certain characteristics appears.",
+        "description": "Returns a list of CCTVs within the specified range around the specified location where a person with the specified characteristics is seen.",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "required": true,
+            "description": "The location to search near (e.g., '건대 입구').",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appearance",
+            "in": "query",
+            "required": true,
+            "description": "The description of the person to search for (e.g., '파란색 옷과 모자를 입은 아이').",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "range",
+            "in": "path",
+            "required": true,
+            "description": "The range in kilometers to search within.",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of CCTVs near the specified location within the specified range where the person with the specified characteristics appears.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string"
+                      },
+                      "distance": {
+                        "type": "number",
+                        "format": "float"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

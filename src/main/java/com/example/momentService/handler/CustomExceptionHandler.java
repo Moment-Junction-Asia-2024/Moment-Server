@@ -1,4 +1,4 @@
-package com.example.gdscservice.handler;
+package com.example.momentService.handler;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

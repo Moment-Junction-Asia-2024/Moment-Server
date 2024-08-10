@@ -1,8 +1,8 @@
-package com.example.gdscservice.common.dto;
+package com.example.momentService.common.dto;
 
 
 
-import com.example.gdscservice.handler.StatusCode;
+import com.example.momentService.handler.StatusCode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

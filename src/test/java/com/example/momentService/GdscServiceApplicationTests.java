@@ -1,4 +1,4 @@
-package com.example.gdscservice;
+package com.example.momentService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

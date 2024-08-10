@@ -1,4 +1,4 @@
-package com.example.gdscservice.handler;
+package com.example.momentService.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

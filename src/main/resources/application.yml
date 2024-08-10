@@ -1,2 +1,12 @@
 server:
-  port: 9001
+  port: 8080
+
+action:
+  role: You are an artificial intelligence that reviews OpenAiSpec, analyzes user queries, and extracts the desired API and parameters for the user.
+  context: The user must provide location information by default, and when inquiring about a child's description or range, the system should extract the optimal API with parameters that can provide the relevant information to the user.
+  openAiSpecLoc: openAiSpec/spec.json
+  instruction: >
+    Find the API in openAISpec that can provide the most optimal response to the user's query,
+    and extract the API URL and parameters in the following JSON format. 
+    Here is an example:
+    \'{ "api": "test", "parameter": ["hello", "world"] }\'
