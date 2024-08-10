@@ -16,7 +16,7 @@ public class CityController {
     private final CityDataServiceImpl cityDataServiceImpl;
 
     @GetMapping("/")
-    public ResponseEntity<Message> searchCityDataInDateRange() throws IOException {
+    public ResponseEntity<Message> searchCityDataInDateRange() throws Exception {
         String dateTime1 = "2024-06-2";
         String dateTime2 = "2024-06-4";
         return ResponseEntity.ok(new Message(StatusCode.OK, cityDataServiceImpl.getMobileDataByTime(dateTime1,dateTime2)));

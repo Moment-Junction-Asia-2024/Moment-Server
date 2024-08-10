@@ -17,7 +17,7 @@ public class ActionController {
     private final ActionManager actionManager;
 
     @PostMapping("/")
-    public ResponseEntity<Message> getPrompt(@RequestBody HashMap<String, String> userPrompt) throws IOException {
+    public ResponseEntity<Message> getPrompt(@RequestBody HashMap<String, String> userPrompt) throws Exception {
         return ResponseEntity.ok(new Message(StatusCode.OK, actionManager.apiExtractor(userPrompt.get("userPrompt"))));
     }
 }
