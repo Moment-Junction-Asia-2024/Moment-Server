@@ -1,40 +1,28 @@
-package com.example.momentService.city;
+package com.example.momentService.city.service;
 
+import com.example.momentService.city.CityData;
+import com.example.momentService.city.repository.CityDataRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class CityDataManager {
+public class CityDataServiceImpl implements CityDataService {
     @Value("${city.instruction}")
     private String cityInstruction;
 
-    @Value("${city.uniqueMobileDataLoc}")
-    private String uniqueMobileDataLoc;
-
     private final ObjectMapper mapper;
+    private final CityDataRepository cityDataRepository;
 
     public CityData findMobileDataByTime(String dateTime1, String dateTime2) throws IOException {
-        Resource resource = new ClassPathResource(uniqueMobileDataLoc);
-        List<UniqueMobileDataJsonDto> uniqueMobileDataJsonDtoList = mapper.readValue(
-                resource.getInputStream(),
-                new TypeReference<List<UniqueMobileDataJsonDto>>() {
-                }
-        );
         StringBuilder content = new StringBuilder();
-
-        uniqueMobileDataJsonDtoList.stream()
+        cityDataRepository.findUniqueMobileDataJsonDtoByDateRange(dateTime1, dateTime2)
+                .stream()
                 .filter(uniqueMobileDataJsonDto -> uniqueMobileDataJsonDto.getTime().compareTo(dateTime1) >= 0 && uniqueMobileDataJsonDto.getTime().compareTo(dateTime2) <= 0)
                 .forEach(uniMobData -> {
                     try {
