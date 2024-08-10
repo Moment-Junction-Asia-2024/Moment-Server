@@ -14,7 +14,6 @@ import java.util.Map;
 @Configuration
 public class KafkaConfiguration {
 
-   w
 
     @Bean
     public KafkaAdmin admin() {
