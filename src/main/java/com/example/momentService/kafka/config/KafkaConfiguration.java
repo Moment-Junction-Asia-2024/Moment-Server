@@ -14,8 +14,7 @@ import java.util.Map;
 @Configuration
 public class KafkaConfiguration {
 
-    @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
+   w
 
     @Bean
     public KafkaAdmin admin() {

@@ -5,6 +5,12 @@ spring:
   kafka:
     bootstrap-servers: localhost:10000,localhost:10001,localhost:10002
 
+openai:
+  model: gpt-4o
+  api:
+    key: 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
+    base-url: https://api.openai.com/v1
+
 action:
   role: You are an artificial intelligence that reviews OpenAiSpec, analyzes user queries, and extracts the desired API and parameters for the user.
   context: The user must provide location information by default, and when inquiring about a child's description or range, the system should extract the optimal API with parameters that can provide the relevant information to the user.
@@ -25,3 +31,7 @@ city:
     - banner: The illegal banner is placed.
     - trash: The trash is thrown away illegally.
     - pothole: The pothole is on the road.
+
+cctv:
+  cctvLoc: json/pohang_cctv.json
+  instruction: After checking the latitude and longitude data of the CCTV data, calculate the average of the latitudes and the average of the longitudes, and then provide the information of the 14 CCTV data points closest to the average latitude and longitude values. Being close to the average means that the sum of the difference between the average latitude and the CCTV latitude and the difference between the average longitude and the CCTV longitude is the smallest. Please provide only the result by placing the values inside the brackets [] and omit the process. Do not response any other string.
