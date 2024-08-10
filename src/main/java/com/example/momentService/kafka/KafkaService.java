@@ -1,6 +1,7 @@
 package com.example.momentService.kafka;
 
 import com.example.momentService.kafka.dto.Answer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -9,7 +10,6 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.CompletableFuture;
@@ -19,9 +19,9 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class KafkaService {
     private final KafkaTemplate<Integer, String> template;
+    private final ObjectMapper objectMapper;
 
-    // TODO: send (userId, value) to Kafka
-    public void sendToKafka(Answer data) {
+    public void sendToKafka(@RequestBody Answer data) throws Exception {
         final ProducerRecord<Integer, String> record = createRecord(data);
 
         CompletableFuture<SendResult<Integer, String>> future = template.send(record);
@@ -35,7 +35,11 @@ public class KafkaService {
         });
     }
 
-    private ProducerRecord<Integer, String> createRecord(final Answer data) {
-        return new ProducerRecord<>("athena", data.getUserId().intValue(), data.getAnswer());
+    private ProducerRecord<Integer, String> createRecord(Answer data) throws Exception{
+        return new ProducerRecord<>(
+                "athena",
+                data.getId().intValue(),
+                objectMapper.writeValueAsString(data.getEvent())
+        );
     }
 }

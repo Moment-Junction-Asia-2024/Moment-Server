@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class Answer {
-    private Long userId;
-    private String answer;
+    private Long id;
+    private Event event;
 }

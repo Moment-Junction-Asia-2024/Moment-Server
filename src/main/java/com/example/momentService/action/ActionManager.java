@@ -2,6 +2,11 @@ package com.example.momentService.action;
 
 import com.example.momentService.cctv.CctvJsonDto;
 import com.example.momentService.cctv.service.CctvService;
+import com.example.momentService.kafka.KafkaService;
+import com.example.momentService.kafka.dto.Answer;
+import com.example.momentService.kafka.dto.Event;
+import com.example.momentService.kafka.dto.EventTitle;
+import com.example.momentService.kafka.dto.Status;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -12,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,19 +27,37 @@ public class ActionManager {
     private final WebClient webClient;
     private final ObjectMapper mapper;
     private final CctvService cctvService;
+    private final KafkaService kafkaService;
 
     @Value("${openai.api.key}")
     private String openApiKey;
 
-    public List<?> apiExtractor(String prompt) throws IOException {
+    public List<?> apiExtractor(String prompt) throws Exception {
         List<CctvJsonDto> cctvJsonDtoList = new ArrayList<>();
         JsonNode jsonNode = mapper.readTree(getChatGptResponse(actionInstructor.promptBuilder(prompt)));
         String result = jsonNode.path("choices").get(0).path("message").path("content").asText();
         ActionResultDto actionResultDto = mapper.readValue(result, ActionResultDto.class);
 
+        kafkaService.sendToKafka(
+                Answer.builder()
+                        .id(1L)
+                        .event(
+                                Event.builder()
+                                    .userId(1L)
+                                    .eventTitle(EventTitle.MISSING)
+                                    .status(Status.RUNNING)
+                                    .content("Your complaint has been received.")
+                                    .build()
+                        ).build()
+        );
+
         if (actionResultDto.getApi().equals("/action/cctv/find")) {
-            cctvJsonDtoList = cctvService.getCctvJsonDtoList(actionResultDto.getParameter().get(0), actionResultDto.getParameter().get(1));
+            cctvService.analyzeCctvData(actionResultDto.getParameter().get(0), actionResultDto.getParameter().get(1));
             return cctvJsonDtoList;
+        }
+
+        if (actionResultDto.getApi().equals("/action/mobile-data/find")) {
+            // 여기서 crack 시나리오
         }
         return null;
 

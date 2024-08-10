@@ -3,6 +3,11 @@ package com.example.momentService.cctv.service;
 import com.example.momentService.cctv.CctvData;
 import com.example.momentService.cctv.CctvJsonDto;
 import com.example.momentService.cctv.repository.CctvRepository;
+import com.example.momentService.kafka.KafkaService;
+import com.example.momentService.kafka.dto.Answer;
+import com.example.momentService.kafka.dto.Event;
+import com.example.momentService.kafka.dto.EventTitle;
+import com.example.momentService.kafka.dto.Status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,22 +16,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +30,7 @@ public class CctvServiceImpl implements CctvService {
     private final CctvRepository cctvRepository;
     private final ObjectMapper mapper;
     private final WebClient webClient;
+    private final KafkaService kafkaService;
 
     @Value("${openai.api.key}")
     private String openApiKey;
@@ -41,6 +38,53 @@ public class CctvServiceImpl implements CctvService {
     private String cctvInstruction;
     @Value("${cctv.cctvFileBasePath}")
     private String cctvFileBasePath;
+
+    @Override
+    public void analyzeCctvData(String location, String characteristic) throws Exception {
+        List<CctvJsonDto> cctvCandidates = getCctvJsonDtoList(location, characteristic);
+        kafkaService.sendToKafka(
+            Answer.builder()
+                .id(1L)
+                .event(
+                    Event.builder()
+                        .userId(1L)
+                        .eventTitle(EventTitle.MISSING)
+                        .status(Status.RUNNING)
+                        .content("CCTV information has been found.")
+                        .next("Analyzing the CCTV data.")
+                        .build()
+                ).build()
+        );
+        // 여기에서 AI server에 분석 요청
+        String analysisResult = "";
+        kafkaService.sendToKafka(
+            Answer.builder()
+                .id(1L)
+                .event(
+                    Event.builder()
+                        .userId(1L)
+                        .eventTitle(EventTitle.MISSING)
+                        .status(Status.RUNNING)
+                        .content("CCTV data has been analyzed.")
+                        .next("Providing the analysis result.")
+                        .build()
+                ).build()
+        );
+        // 분석 결과 정보로 GPT를 이용해 응답 생성
+        String gptResponse = getChatGptResponse(analysisResult);
+        kafkaService.sendToKafka(
+            Answer.builder()
+                .id(1L)
+                .event(
+                    Event.builder()
+                        .userId(1L)
+                        .eventTitle(EventTitle.MISSING)
+                        .status(Status.FINISHED)
+                        .content("Here is the report of the CCTV data analysis.\n" + gptResponse)
+                        .build()
+                ).build()
+        );
+    }
 
     @Override
     public List<CctvJsonDto> getCctvJsonDtoList(String location, String characteristic) throws IOException {
