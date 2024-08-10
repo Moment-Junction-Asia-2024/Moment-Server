@@ -30,6 +30,8 @@ public class CctvServiceImpl implements CctvService {
     private String openApiKey;
     @Value("${cctv.instruction}")
     private String cctvInstruction;
+    @Value("${cctv.cctvFileBasePath}")
+    private String cctvFileBasePath;
 
     @Override
     public List<CctvJsonDto> getCctvJsonDtoList(String location) throws IOException {
@@ -51,7 +53,7 @@ public class CctvServiceImpl implements CctvService {
                     }
                 })
                 .toList();
-        if (!content.isEmpty() && cctvCandidates.size() > 14) {
+        if (!content.isEmpty()) {
             CctvData cctvData = CctvData.builder()
                     .cctvData(content.toString())
                     .description(cctvInstruction)
@@ -62,13 +64,17 @@ public class CctvServiceImpl implements CctvService {
 
             String targetCctvIdListString = jsonNode.path("choices").get(0).path("message").path("content").asText();
             targetCctvIdList = mapper.readValue(targetCctvIdListString, new TypeReference<List<CctvJsonDto>>() {});
+
             System.out.println(targetCctvIdList);
+            for (int i = 1; i < 15; i++) {
+                String folderName = "cctv" + i;
+//                Path folderPath = Paths.get(basePath, folderName);
+            }
             // 여기에서
 
             return cctvCandidates;
-        } else {
-            return cctvCandidates;
         }
+        return cctvCandidates;
     }
 
     public String getChatGptResponse(String userMessage) {
