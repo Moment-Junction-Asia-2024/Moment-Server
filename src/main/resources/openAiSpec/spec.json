@@ -22,7 +22,7 @@
             "name": "location",
             "in": "query",
             "required": true,
-            "description": "The location to search near (e.g., '건대 입구').",
+            "description": "The location to search near.",
             "schema": {
               "type": "string"
             }

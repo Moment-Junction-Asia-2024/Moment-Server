@@ -19,7 +19,7 @@ public class CctvController {
     private final CctvService cctvService;
 
     @GetMapping("/")
-    public ResponseEntity<Message> searchCctvInformation() throws IOException {
+    public ResponseEntity<Message> searchCctvInformation() throws Exception {
         cctvService.getCctvJsonDtoList("남구 지곡동", "남자아이");
         return ResponseEntity.ok(new Message(StatusCode.OK));
     }

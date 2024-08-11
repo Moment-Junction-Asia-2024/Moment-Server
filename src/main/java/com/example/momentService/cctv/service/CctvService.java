@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface CctvService {
     void analyzeCctvData(String location, String characteristic) throws Exception;
-    List<CctvJsonDto> getCctvJsonDtoList(String location, String characteristic) throws IOException;
+    List<CctvJsonDto> getCctvJsonDtoList(String location, String characteristic) throws Exception;
 }

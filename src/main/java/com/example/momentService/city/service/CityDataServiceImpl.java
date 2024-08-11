@@ -4,6 +4,7 @@ package com.example.momentService.city.service;
 import com.example.momentService.city.CityData;
 import com.example.momentService.city.CrackJsonDto;
 import com.example.momentService.city.repository.CityDataRepository;
+import com.example.momentService.kafka.KafkaService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,12 +32,14 @@ public class CityDataServiceImpl implements CityDataService {
     private final CityDataRepository cityDataRepository;
     private final WebClient gptWebClient;
     private final WebClient fastWebClient;
+    private final KafkaService kafkaService;
 
-    public CityDataServiceImpl(ObjectMapper mapper, CityDataRepository cityDataRepository, @Qualifier("gptWebClient") WebClient gptWebClient, @Qualifier("fastWebClient") WebClient fastWebClient) {
+    public CityDataServiceImpl(ObjectMapper mapper, CityDataRepository cityDataRepository, @Qualifier("gptWebClient") WebClient gptWebClient, @Qualifier("fastWebClient") WebClient fastWebClient, KafkaService kafkaService) {
         this.mapper = mapper;
         this.cityDataRepository = cityDataRepository;
         this.gptWebClient = gptWebClient;
         this.fastWebClient = fastWebClient;
+        this.kafkaService = kafkaService;
     }
 
     public CrackJsonDto getMobileData() throws IOException {

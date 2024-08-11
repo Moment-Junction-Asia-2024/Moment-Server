@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CctvServiceImpl implements CctvService {
     private final CctvRepository cctvRepository;
     private final ObjectMapper mapper;
@@ -105,10 +107,11 @@ public class CctvServiceImpl implements CctvService {
 
 
     @Override
-    public List<CctvJsonDto> getCctvJsonDtoList(String location, String characteristic) throws IOException {
+    public List<CctvJsonDto> getCctvJsonDtoList(String location, String characteristic) throws Exception {
         StringBuilder content = new StringBuilder();
         List<CctvJsonDto> targetCctvList;
         List<CctvJsonDto> findCctvList = new ArrayList<>();
+        log.info("???");
 
         List<CctvJsonDto> cctvCandidates = cctvRepository.findCctvJsonDtoByLocation(location)
                 .stream()
@@ -137,7 +140,19 @@ public class CctvServiceImpl implements CctvService {
             String targetCctvIdListString = jsonNode.path("choices").get(0).path("message").path("content").asText();
             targetCctvList = mapper.readValue(targetCctvIdListString, new TypeReference<List<CctvJsonDto>>() {
             });
-
+            kafkaService.sendToKafka(
+                Answer.builder()
+                    .id(1L)
+                    .event(
+                        Event.builder()
+                            .userId(1L)
+                            .eventTitle(EventTitle.MISSING)
+                            .status(Status.RUNNING)
+                            .content("CCTV information has been found.")
+                            .next("Analyzing the CCTV data.")
+                            .build()
+                        ).build()
+            );
 
             for (int i = 1; i < 4; i++) {
                 String folderName = "cctv" + i;
