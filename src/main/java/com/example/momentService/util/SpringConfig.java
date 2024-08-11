@@ -1,5 +1,6 @@
 package com.example.momentService.util;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +17,15 @@ public class SpringConfig {
     }
 
     @Bean
-    public WebClient webClient(WebClient.Builder builder) {
+    @Qualifier("gptWebClient")
+    public WebClient gptWebClient(WebClient.Builder builder) {
         return builder.baseUrl(openAiBaseUrl)
+                .build();
+    }
+    @Bean
+    @Qualifier("fastWebClient")
+    public WebClient fastWebClient(WebClient.Builder builder) {
+        return builder.baseUrl("http://localhost:8000")
                 .build();
     }
 }

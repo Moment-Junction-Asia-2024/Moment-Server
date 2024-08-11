@@ -6,5 +6,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface CityDataRepository {
-    List<UniqueMobileDataJsonDto> findUniqueMobileDataJsonDtoByDateRange(String dateTime1, String dateTime2) throws IOException;
+    List<UniqueMobileDataJsonDto> findUniqueMobileDataJsonDtoByDateRange() throws IOException;
 }
