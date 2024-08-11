@@ -2,6 +2,7 @@ package com.example.momentService.action;
 
 import com.example.momentService.cctv.CctvJsonDto;
 import com.example.momentService.cctv.service.CctvService;
+import com.example.momentService.city.service.CityDataService;
 import com.example.momentService.kafka.KafkaService;
 import com.example.momentService.kafka.dto.Answer;
 import com.example.momentService.kafka.dto.Event;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,16 +26,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ActionManager {
     private final ActionInstructor actionInstructor;
-    private final WebClient webClient;
+    private final WebClient gptWebClient;
     private final ObjectMapper mapper;
     private final CctvService cctvService;
+    private final CityDataService cityDataService;
     private final KafkaService kafkaService;
 
     @Value("${openai.api.key}")
     private String openApiKey;
 
     public List<?> apiExtractor(String prompt) throws Exception {
-        List<CctvJsonDto> cctvJsonDtoList = new ArrayList<>();
+        List<?> resourceList = new ArrayList<>();
         JsonNode jsonNode = mapper.readTree(getChatGptResponse(actionInstructor.promptBuilder(prompt)));
         String result = jsonNode.path("choices").get(0).path("message").path("content").asText();
         ActionResultDto actionResultDto = mapper.readValue(result, ActionResultDto.class);
@@ -52,12 +55,12 @@ public class ActionManager {
         );
 
         if (actionResultDto.getApi().equals("/action/cctv/find")) {
-            cctvService.analyzeCctvData(actionResultDto.getParameter().get(0), actionResultDto.getParameter().get(1));
-            return cctvJsonDtoList;
+            resourceList = cctvService.getCctvJsonDtoList(actionResultDto.getParameter().get(0), actionResultDto.getParameter().get(1));
+            return resourceList;
         }
-
-        if (actionResultDto.getApi().equals("/action/mobile-data/find")) {
-            // 여기서 crack 시나리오
+        if (actionResultDto.getApi().equals("/action/city/")) {
+            resourceList = List.of(cityDataService.getMobileData());
+            return resourceList;
         }
         return null;
 
@@ -67,7 +70,7 @@ public class ActionManager {
 
         ChatGptRequest request = new ChatGptRequest("gpt-4o", userMessage);
 
-        return webClient.post()
+        return gptWebClient.post()
                 .uri("/chat/completions")
                 .header("Authorization", "Bearer " + openApiKey)
                 .body(Mono.just(request), ChatGptRequest.class)

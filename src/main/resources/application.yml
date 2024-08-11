@@ -8,7 +8,7 @@ spring:
 openai:
   model: gpt-4o
   api:
-    key: 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
+    key: sk-Lu_Ol8Sf_1glbSyOs_Nf721PN48NuxkfT3j6-3oFgvT3BlbkFJWpJhoaQhS25G8xufMcQnL89WH5nNbVJRZjK9G2L8oA
     base-url: https://api.openai.com/v1
 
 action:
@@ -26,15 +26,35 @@ action:
 city:
   uniqueMobileDataLoc: json/unique_mobile_data.json
   instruction: >
-    Here is the data of Pohang City. The data is collected from the mobile devices.
-    The data includes the longitude, latitude, class name, region name, and etc.
-    The classname is the name of the problems.:
-    - crack: The road is cracked.
-    - banner: The illegal banner is placed.
-    - trash: The trash is thrown away illegally.
-    - pothole: The pothole is on the road.
+    We want to find the area with the highest number of crack and number of cracks. If the values of regionname_1 and regionname_2 are the same, they can be considered the same region. The result should provide the number of cracks and the data of the region with cracks. Do not include ```json ```. Omit the process. Please check the example below:
+    {
+      "count":20,
+      "data": [
+        {
+            "id": 42265,
+            "longitude": 129.3255009,
+            "latitude": 36.0403445,
+            "classname": "crack",
+            "regionname_1": "경상북도",
+            "regionname_2": "포항시 남구",
+            "regionname_3": "이동",
+            "time": "2024-07-18 10:51:31.331966+09"
+          },
+        {
+          "id": 42265,
+          "longitude": 129.3255009,
+          "latitude": 36.0403445,
+          "classname": "crack",
+          "regionname_1": "경상북도",
+          "regionname_2": "포항시 남구",
+          "regionname_3": "이동",
+          "time": "2024-07-18 10:51:31.331966+09"
+        },
+        ...
+      ]
+    }
 
 cctv:
   cctvLoc: json/pohang_cctv.json
-  instruction: After checking the latitude and longitude data of the CCTV data, calculate the average of the latitudes and the average of the longitudes, and then provide the information of the 14 CCTV data points closest to the average latitude and longitude values. Being close to the average means that the sum of the difference between the average latitude and the CCTV latitude and the difference between the average longitude and the CCTV longitude is the smallest. Please provide only the result by placing the values inside the brackets [] and omit the process. Do not response any other string.
+  instruction: After checking the latitude and longitude data of the CCTV data, calculate the average of the latitudes and the average of the longitudes, and then provide the information of the 3 CCTV data points closest to the average latitude and longitude values. Being close to the average means that the sum of the difference between the average latitude and the CCTV latitude and the difference between the average longitude and the CCTV longitude is the smallest. Please provide only the result by placing the values inside the brackets [] and omit the process. Do not response any other string.
   cctvFileBasePath: src/main/resources/cctv

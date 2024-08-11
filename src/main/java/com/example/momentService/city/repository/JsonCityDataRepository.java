@@ -20,7 +20,7 @@ public class JsonCityDataRepository implements CityDataRepository{
 
     private final ObjectMapper mapper;
     @Override
-    public List<UniqueMobileDataJsonDto> findUniqueMobileDataJsonDtoByDateRange(String dateTime1, String dateTime2) throws IOException {
+    public List<UniqueMobileDataJsonDto> findUniqueMobileDataJsonDtoByDateRange() throws IOException {
         Resource resource = new ClassPathResource(uniqueMobileDataLoc);
         return mapper.readValue(
                 resource.getInputStream(),
