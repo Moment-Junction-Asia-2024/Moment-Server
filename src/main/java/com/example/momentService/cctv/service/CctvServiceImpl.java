@@ -3,7 +3,11 @@ package com.example.momentService.cctv.service;
 import com.example.momentService.cctv.CctvData;
 import com.example.momentService.cctv.CctvJsonDto;
 import com.example.momentService.cctv.repository.CctvRepository;
-import com.example.momentService.city.repository.CityDataRepository;
+import com.example.momentService.kafka.KafkaService;
+import com.example.momentService.kafka.dto.Answer;
+import com.example.momentService.kafka.dto.Event;
+import com.example.momentService.kafka.dto.EventTitle;
+import com.example.momentService.kafka.dto.Status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
@@ -34,6 +37,7 @@ import java.util.stream.Collectors;
 public class CctvServiceImpl implements CctvService {
     private final CctvRepository cctvRepository;
     private final ObjectMapper mapper;
+    private final KafkaService kafkaService;
     private final WebClient fastWebClient;
     private final WebClient gptWebClient;
 
@@ -44,9 +48,57 @@ public class CctvServiceImpl implements CctvService {
     @Value("${cctv.cctvFileBasePath}")
     private String cctvFileBasePath;
 
-    public CctvServiceImpl(CctvRepository cctvRepository, ObjectMapper mapper, @Qualifier("gptWebClient") WebClient gptWebClient, @Qualifier("fastWebClient") WebClient fastWebClient) {
+    @Override
+    public void analyzeCctvData(String location, String characteristic) throws Exception {
+        List<CctvJsonDto> cctvCandidates = getCctvJsonDtoList(location, characteristic);
+        kafkaService.sendToKafka(
+            Answer.builder()
+                .id(1L)
+                .event(
+                    Event.builder()
+                        .userId(1L)
+                        .eventTitle(EventTitle.MISSING)
+                        .status(Status.RUNNING)
+                        .content("CCTV information has been found.")
+                        .next("Analyzing the CCTV data.")
+                        .build()
+                ).build()
+        );
+        // 여기에서 AI server에 분석 요청
+        String analysisResult = "";
+        kafkaService.sendToKafka(
+            Answer.builder()
+                .id(1L)
+                .event(
+                    Event.builder()
+                        .userId(1L)
+                        .eventTitle(EventTitle.MISSING)
+                        .status(Status.RUNNING)
+                        .content("CCTV data has been analyzed.")
+                        .next("Providing the analysis result.")
+                        .build()
+                ).build()
+        );
+        // 분석 결과 정보로 GPT를 이용해 응답 생성
+        String gptResponse = getChatGptResponse(analysisResult);
+        kafkaService.sendToKafka(
+            Answer.builder()
+                .id(1L)
+                .event(
+                    Event.builder()
+                        .userId(1L)
+                        .eventTitle(EventTitle.MISSING)
+                        .status(Status.FINISHED)
+                        .content("Here is the report of the CCTV data analysis.\n" + gptResponse)
+                        .build()
+                ).build()
+        );
+    }
+
+    public CctvServiceImpl(CctvRepository cctvRepository, ObjectMapper mapper, KafkaService kafkaService, @Qualifier("gptWebClient") WebClient gptWebClient, @Qualifier("fastWebClient") WebClient fastWebClient) {
         this.cctvRepository = cctvRepository;
         this.mapper = mapper;
+        this.kafkaService = kafkaService;
         this.fastWebClient = fastWebClient;
         this.gptWebClient = gptWebClient;
     }

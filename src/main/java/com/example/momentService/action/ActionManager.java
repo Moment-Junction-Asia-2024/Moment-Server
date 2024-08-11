@@ -3,6 +3,11 @@ package com.example.momentService.action;
 import com.example.momentService.cctv.CctvJsonDto;
 import com.example.momentService.cctv.service.CctvService;
 import com.example.momentService.city.service.CityDataService;
+import com.example.momentService.kafka.KafkaService;
+import com.example.momentService.kafka.dto.Answer;
+import com.example.momentService.kafka.dto.Event;
+import com.example.momentService.kafka.dto.EventTitle;
+import com.example.momentService.kafka.dto.Status;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -25,17 +30,30 @@ public class ActionManager {
     private final ObjectMapper mapper;
     private final CctvService cctvService;
     private final CityDataService cityDataService;
+    private final KafkaService kafkaService;
 
     @Value("${openai.api.key}")
     private String openApiKey;
 
-    public List<?> apiExtractor(String prompt) throws IOException {
+    public List<?> apiExtractor(String prompt) throws Exception {
         List<?> resourceList = new ArrayList<>();
         JsonNode jsonNode = mapper.readTree(getChatGptResponse(actionInstructor.promptBuilder(prompt)));
         String result = jsonNode.path("choices").get(0).path("message").path("content").asText();
-        System.out.println(result);
         ActionResultDto actionResultDto = mapper.readValue(result, ActionResultDto.class);
-        System.out.println(actionResultDto);
+
+        kafkaService.sendToKafka(
+                Answer.builder()
+                        .id(1L)
+                        .event(
+                                Event.builder()
+                                    .userId(1L)
+                                    .eventTitle(EventTitle.MISSING)
+                                    .status(Status.RUNNING)
+                                    .content("Your complaint has been received.")
+                                    .build()
+                        ).build()
+        );
+
         if (actionResultDto.getApi().equals("/action/cctv/find")) {
             resourceList = cctvService.getCctvJsonDtoList(actionResultDto.getParameter().get(0), actionResultDto.getParameter().get(1));
             return resourceList;
